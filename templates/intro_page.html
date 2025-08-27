@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About Sharon Julius</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --text:#333;
+      --accent:#4b2e83;
+      --muted:#666;
+      --card:#ffffff;
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+      --radius:18px;
+      --blue:#007BFF;
+      --blue-dark:#0056b3;
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: linear-gradient(90deg,#a8edea 0%, #c0e1f9 50%, #fed6e3 100%);
+    }
+    .wrap{ max-width:1100px; margin:0 auto; padding:48px 20px 80px; }
+    .hero{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:36px;
+      align-items:center;
+    }
+
+    /* LEFT COLUMN: subtle bg image + portrait on top */
+    .photo{
+      position: relative;
+      padding: 28px;
+      background: url('{{ url_for("static", filename="img/hero-bg.jpg") }}') center/cover no-repeat;
+      min-height: 360px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .photo::before{
+      content:"";
+      position:absolute; inset:0;
+      background: rgba(255,255,255,.60); /* soft fade so bg is subtle */
+    }
+    .photo img{
+      position: relative; /* above overlay */
+      width: 84%;
+      max-width: 300px;
+      height: auto;
+      border-radius: 50%;          /* round portrait */
+      box-shadow: var(--shadow);
+      object-fit: cover;
+    }
+
+    /* RIGHT COLUMN */
+    .content{ padding: 42px 42px 42px 0; }
+    h1{ margin:0 0 6px; font-size:42px; line-height:1.15; color:var(--accent); }
+    .subtitle{ margin:0 0 18px; color:var(--muted); font-size:18px; }
+    h2{ margin:28px 0 10px; font-size:24px; }
+    p{ margin:0 0 12px; line-height:1.7; font-size:16px; }
+    ul{ list-style:none; padding:0; margin:6px 0 0; font-size:16px; }
+    ul li{ margin:6px 0; padding-left:26px; position:relative; }
+    ul li::before{ content:"✔"; position:absolute; left:0; top:0; line-height:1.2; opacity:.85; }
+
+    /* Button */
+    .btn{
+      display:inline-block;
+      margin-top: 22px;
+      padding:12px 24px;
+      background: var(--blue);
+      color:#fff; text-decoration:none;
+      border-radius:25px;
+      font-size:16px; font-weight:600;
+      transition: background-color .2s ease, transform .05s ease;
+    }
+    .btn:hover{ background: var(--blue-dark); }
+    .btn:active{ transform: translateY(1px); }
+
+    footer{ text-align:center; color:#555; font-size:14px; margin-top:22px; }
+
+    /* responsive */
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+      .content{ padding: 0 28px 28px; }
+      .photo{ padding: 28px 28px 0; min-height: 260px; }
+      h1{ font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="grid">
+        <!-- LEFT: background + portrait (portrait stays as is) -->
+        <div class="photo">
+          <img src="{{ url_for('static', filename='img/profile.jpg') }}"
+               alt="Portrait of Sharon Julius">
+        </div>
+
+        <!-- RIGHT: content -->
+        <div class="content">
+          <h1>Sharon Julius</h1>
+          <p class="subtitle">Cloud & DevOps learner — building, shipping, and improving.</p>
+
+          <h2>We can do more together</h2>
+          <p>
+            I’m an engineer transitioning into IT and cloud technologies, with experience in
+            production and operations. I enjoy creating solutions, building web apps, and
+            continuously learning.
+          </p>
+
+          <h2>My Work</h2>
+          <ul>
+            <li>Flask-based comment board</li>
+            <li>PythonAnywhere hosting setup</li>
+          </ul>
+
+          <!-- Login button -->
+          <p>
+            <a class="btn" href="{{ url_for('login') }}">Login to View &amp; Post Comments</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>© {{ datetime.utcnow().year }} Sharon Julius. All rights reserved.</footer>
+  </div>
+</body>
+</html>

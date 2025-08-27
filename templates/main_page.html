@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+    integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+    crossorigin="anonymous"
+  />
+
+  <title>My Scratchboard Page — Comments</title>
+
+  <style>
+    :root{
+      --accent:#4b2e83;
+      --blue:#007BFF;
+      --blue-dark:#0056b3;
+      --card:#ffffff;
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+      --radius:18px;
+      --muted:#666;
+      --border:#eaeaea;
+    }
+    body{
+      background: linear-gradient(90deg,#a8edea 0%, #c0e1f9 50%, #fed6e3 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      color:#333;
+      margin:0;
+    }
+    /* top navbar consistent look */
+    .navbar-inverse{
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      margin-bottom: 0;
+    }
+    .navbar-brand{
+      color: var(--accent) !important;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .navbar-inverse .navbar-nav>li>a{
+      color:#333;
+      font-weight:600;
+    }
+    .navbar-inverse .navbar-nav>li>a:hover{
+      color: var(--accent);
+    }
+
+    /* page shell */
+    .wrap{ max-width: 900px; margin: 40px auto 80px; padding: 0 16px; }
+
+    /* header block */
+    .page-head{
+      text-align:center;
+      margin-bottom: 18px;
+    }
+    .page-head h2{
+      margin:0 0 6px;
+      color: var(--accent);
+      font-weight: 800;
+    }
+    .page-head p{ color: var(--muted); margin:0; }
+
+    /* main card */
+    .card{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    /* comment item */
+    .comment{
+      border-bottom: 1px solid var(--border);
+      padding: 14px 4px;
+    }
+    .comment:last-child{ border-bottom: none; }
+    .comment .meta{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      font-size: 13px; color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .comment .author{
+      font-weight: 700; color:#333; font-size: 14px;
+    }
+    .comment .content{
+      white-space: pre-wrap; /* keep user line breaks */
+      font-size: 15px;
+    }
+
+    /* add comment form */
+    .add-card{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
+      margin-top: 16px;
+    }
+    .form-control{
+      border-radius: 12px;
+      box-shadow: none;
+    }
+    textarea.form-control{
+      min-height: 110px;
+      resize: vertical;
+    }
+    .btn-primary{
+      background: var(--blue);
+      border-color: var(--blue);
+      border-radius: 25px;
+      padding: 10px 18px;
+      font-weight: 600;
+      transition: background-color .2s ease, transform .05s ease;
+    }
+    .btn-primary:hover{
+      background: var(--blue-dark);
+      border-color: var(--blue-dark);
+    }
+    .btn-primary:active{ transform: translateY(1px); }
+
+    /* footer/link row */
+    .links{
+      margin-top: 12px;
+      text-align:center;
+      font-size: 14px;
+    }
+    .links a{ color: var(--accent); text-decoration:none; }
+    .links a:hover{ text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed"
+                data-toggle="collapse" data-target="#navbar"
+                aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ url_for('index') }}">My Scratchboard — Comments</a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ url_for('intro') }}">Intro</a></li>
+        {% if current_user.is_authenticated %}
+          <li><a href="{{ url_for('logout') }}">Log out</a></li>
+        {% else %}
+          <li><a href="{{ url_for('login') }}">Log in</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="page-head">
+      <h2>Community Board</h2>
+      <p>Share a quick note. Be kind, be concise ✨</p>
+    </div>
+
+    <!-- Comments List -->
+    <div class="card">
+      {% if comments|length == 0 %}
+        <p style="text-align:center; color: var(--muted); margin:10px 0;">
+          No comments yet. Be the first to say hello!
+        </p>
+      {% else %}
+        {% for comment in comments %}
+          <div class="comment">
+            <div class="meta">
+              <span class="author">{{ comment.author }}</span>
+              <span>•</span>
+              <span>{{ comment.local_time.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+            </div>
+            <div class="content">{{ comment.content }}</div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+    <!-- Add Comment -->
+    {% if current_user.is_authenticated %}
+      <div class="add-card">
+        <form action="{{ url_for('add_comment') }}" method="POST">
+          <div class="form-group">
+            <label for="contents" style="font-weight:600;">Add a comment</label>
+            <textarea id="contents" name="contents" placeholder="Write something nice…" class="form-control"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Post comment</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="links">
+        <a href="{{ url_for('login') }}">Log in to post a comment</a>
+      </div>
+    {% endif %}
+
+    <!-- Footer / Social -->
+    <div class="links">
+      Connect with me on
+      <a href="https://www.linkedin.com/in/sharon-julius-606a792ba/" target="_blank">LinkedIn</a>
+      • © {{ datetime.utcnow().year }} Sharon Julius
+    </div>
+  </div>
+
+  <!-- (Optional) Bootstrap JS for navbar toggle on mobile -->
+  <!--
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  -->
+</body>
+</html>
