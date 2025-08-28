@@ -1,3 +1,4 @@
+import os
 from flask import Flask, redirect, render_template, request, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -8,16 +9,17 @@ import pytz
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-SQLALCHEMY_DATABASE_URI = (
-    "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
-        username="Sharonj",
-        password="kolopis123",
-        hostname="Sharonj.mysql.pythonanywhere-services.com",
-        databasename="Sharonj$comments",
-    )
+DB_USER = os.getenv("DB_USER")      # e.g. sharon@yourdb  (or flaskuser@yourdb)
+DB_PASS = os.getenv("DB_PASS")
+DB_HOST = os.getenv("DB_HOST")      # e.g. yourdb.mysql.database.azure.com
+DB_NAME = os.getenv("DB_NAME")      # e.g. flaskdb
+
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mysql+mysqlconnector://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}"
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
-app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 280
+app.config["SQLALCHEMY_POOL_PRE_PING"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
